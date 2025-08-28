@@ -1,0 +1,137 @@
+# PPE Detection System - Default Configuration
+# Author: PPE Detection System
+# Date: 2025-08-26
+
+# Model Configuration
+model:
+  # Model weights path (relative to project root or absolute)
+  weights: "yolov8n.pt"
+  
+  # Device configuration
+  device: "auto"  # Options: auto, cpu, cuda, mps
+  
+  # Inference parameters
+  confidence_threshold: 0.35
+  iou_threshold: 0.5
+  
+  # Model input image size
+  image_size: 640
+  
+  # Maximum batch size for inference
+  max_batch_size: 16
+
+# PPE Detection Parameters
+ppe:
+  # PPE-person matching thresholds
+  overlap_threshold: 0.3
+  min_area_ratio: 0.01
+  max_area_ratio: 0.5
+  min_iou_threshold: 0.1
+  
+  # Detection categories
+  categories:
+    - person
+    - helmet
+    - vest
+    - hard_hat
+    - safety_vest
+
+# API Server Configuration
+api:
+  host: "0.0.0.0"
+  port: 8080
+  reload: false
+  workers: 1
+  
+  # File upload limits
+  max_file_size_mb: 10
+  allowed_image_types:
+    - "image/jpeg"
+    - "image/jpg"
+    - "image/png"
+    - "image/bmp"
+
+# Camera Configuration
+camera:
+  # Default local camera index
+  default_index: 0
+  
+  # Frame capture settings
+  default_width: 640
+  default_height: 480
+  default_fps: 30
+  
+  # Buffer settings for IP cameras
+  buffer_size: 1
+  
+  # Reconnection settings
+  reconnect_delay: 5.0
+  max_reconnect_attempts: 3
+  max_consecutive_failures: 5
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # File logging (optional)
+  file_logging: false
+  log_file: "logs/ppe_detection.log"
+  max_file_size_mb: 10
+  backup_count: 5
+
+# Visualization Settings
+visualization:
+  # Colors (BGR format for OpenCV)
+  colors:
+    compliant_person: [0, 255, 0]     # Green
+    violation_person: [0, 0, 255]     # Red
+    helmet: [255, 255, 0]             # Light blue
+    vest: [0, 165, 255]               # Orange
+    text_background: [0, 0, 0]        # Black
+    text_foreground: [255, 255, 255]  # White
+  
+  # Font settings
+  font_scale: 0.7
+  font_thickness: 2
+  line_thickness: 2
+  
+  # Display settings
+  show_confidence: true
+  show_violations_count: true
+  show_fps: true
+
+# Data Storage
+storage:
+  # Input/output directories
+  images_dir: "data/images"
+  videos_dir: "data/videos"
+  output_dir: "data/output"
+  
+  # Temporary files
+  temp_dir: "temp"
+  
+  # Cleanup settings
+  auto_cleanup_temp: true
+  temp_retention_hours: 24
+
+# Performance Settings
+performance:
+  # Threading
+  use_multiprocessing: false
+  max_workers: 4
+  
+  # Memory management
+  clear_cache_interval: 100  # frames
+  max_memory_usage_mb: 2048
+  
+  # Optimization
+  use_tensorrt: false
+  use_onnx: false
+  
+# Development Settings
+development:
+  debug: false
+  profiling: false
+  save_debug_images: false
+  debug_output_dir: "debug"

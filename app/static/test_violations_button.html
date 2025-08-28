@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Violations Folder Button</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 10px;
+        }
+        
+        .btn-folder {
+            background: linear-gradient(135deg, #6b46c1 0%, #553c9a 100%);
+            color: white;
+            box-shadow: 0 4px 16px rgba(107, 70, 193, 0.3);
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        
+        .btn-folder:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(107, 70, 193, 0.4);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        #log {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Violations Folder Button Test</h1>
+    
+    <p>This page tests the violations folder button functionality in isolation.</p>
+    
+    <button id="openViolationsFolderBtn" class="btn btn-folder">
+        📁 Папка нарушений (Test)
+    </button>
+    
+    <button onclick="testButton()" class="btn" style="background: #0066ff;">
+        🔍 Test Button
+    </button>
+    
+    <button onclick="clearLog()" class="btn" style="background: #ff4444;">
+        🗑️ Clear Log
+    </button>
+    
+    <div id="log"></div>
+    
+    <!-- Modal -->
+    <div id="folderModal" class="modal">
+        <div class="modal-content">
+            <h3>📁 Test Modal</h3>
+            <p>Modal is working!</p>
+            <div id="folderStats">Loading stats...</div>
+            <button onclick="hideModal()" class="btn" style="background: #888;">Close</button>
+        </div>
+    </div>
+    
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        function showModal() {
+            log('📁 Showing modal...');
+            const modal = document.getElementById('folderModal');
+            modal.style.display = 'flex';
+        }
+        
+        function hideModal() {
+            log('📁 Hiding modal...');
+            const modal = document.getElementById('folderModal');
+            modal.style.display = 'none';
+        }
+        
+        function testButton() {
+            log('🔍 Testing button functionality...');
+            
+            const button = document.getElementById('openViolationsFolderBtn');
+            log('Button found: ' + !!button);
+            
+            if (button) {
+                log('Button disabled: ' + button.disabled);
+                log('Button style display: ' + window.getComputedStyle(button).display);
+                log('Button style visibility: ' + window.getComputedStyle(button).visibility);
+                log('Button style pointer-events: ' + window.getComputedStyle(button).pointerEvents);
+                log('Button classList: ' + button.classList.toString());
+                
+                // Test click
+                log('🖱️ Simulating click...');
+                button.click();
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 DOM loaded, initializing test...');
+            
+            const button = document.getElementById('openViolationsFolderBtn');
+            if (button) {
+                log('✅ Button found, adding event listener...');
+                
+                button.addEventListener('click', (e) => {
+                    log('📁 BUTTON CLICKED! Event: ' + e.type);
+                    e.preventDefault();
+                    showModal();
+                });
+                
+                button.addEventListener('mousedown', () => {
+                    log('🖱️ Button mousedown detected');
+                });
+                
+                button.addEventListener('mouseover', () => {
+                    log('🖱️ Button mouseover detected');
+                });
+                
+                log('✅ Event listeners attached');
+            } else {
+                log('❌ Button not found!');
+            }
+        });
+        
+        log('📋 Test page loaded');
+    </script>
+</body>
+</html>

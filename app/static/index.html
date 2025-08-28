@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Construction - Real-time Monitoring</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🛡</div>
+                <div class="logo-text">
+                    <h1>Safe Construction</h1>
+                    <p>Real-time Personal Protective Equipment Detection</p>
+                </div>
+            </div>
+            <div class="status" id="connectionStatus">
+                <div class="status-dot"></div>
+                OFFLINE
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-button active" data-tab="camera" id="cameraTab">
+                📹 Camera & Detection
+            </button>
+            <button class="tab-button" data-tab="docs" id="docsTab">
+                📖 API Documentation
+            </button>
+            <button class="tab-button" data-tab="about" id="aboutTab">
+                ℹ️ About System
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Camera Tab Content -->
+            <div id="cameraContent" class="tab-pane active">
+                <div class="main-panel">
+                    <div class="video-container">
+                        <video id="videoElement" autoplay muted playsinline style="display: none; width: 100%; height: 100%; object-fit: cover;"></video>
+                        <canvas id="captureCanvas" style="display: none;"></canvas>
+                        <div id="videoOverlay" class="video-overlay">
+                            <div class="camera-icon">📹</div>
+                            <div class="video-text">
+                                <div class="video-title">Click "Start Camera" to begin detection</div>
+                                <div class="video-subtitle">Allow camera access when prompted</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Processing Indicator -->
+                        <div id="processingIndicator" class="processing-indicator" style="display: none;">
+                            <div class="spinner"></div>
+                            <span>Processing...</span>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button id="startCameraBtn" class="btn btn-primary">
+                            📷 Start Camera
+                        </button>
+                        <button id="stopCameraBtn" class="btn btn-secondary" disabled>
+                            ⏹ Stop Camera
+                        </button>
+                        <button id="startDetectionBtn" class="btn btn-success" disabled>
+                            🔍 Start Detection
+                        </button>
+                        <button id="stopDetectionBtn" class="btn btn-danger" disabled>
+                            ⏸ Stop Detection
+                        </button>
+                        <button id="openViolationsFolderBtn" class="btn btn-folder">
+                            📁 Папка нарушений
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-icon">📊</div>
+                            <div class="panel-title">Detection Results</div>
+                            <div class="last-update">
+                                <div>Last update:</div>
+                                <div id="lastUpdateTime">Never</div>
+                            </div>
+                        </div>
+
+                        <div class="metrics">
+                            <div class="metric safe">
+                                <div class="metric-icon">👥</div>
+                                <div class="metric-value" id="totalPersons">0</div>
+                                <div class="metric-label">Total Persons</div>
+                            </div>
+
+                            <div class="metric safe">
+                                <div class="metric-icon">✅</div>
+                                <div class="metric-value" id="compliantPersons">0</div>
+                                <div class="metric-label">Compliant</div>
+                            </div>
+
+                            <div class="metric warning">
+                                <div class="metric-icon">⚠️</div>
+                                <div class="metric-value" id="violationCount">0</div>
+                                <div class="metric-label">Violations</div>
+                            </div>
+
+                            <div class="metric neutral">
+                                <div class="metric-icon">📈</div>
+                                <div class="metric-value" id="complianceRate">0%</div>
+                                <div class="metric-label">Compliance Rate</div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <div class="analysis-header">
+                                <div class="analysis-title">📋 Current Frame Analysis</div>
+                            </div>
+                            <div class="analysis-content" id="detectionDetails">
+                                No detection data available. Start camera and detection to see results.
+                            </div>
+                        </div>
+
+                        <div class="performance-section">
+                            <div class="performance-header">
+                                <div class="performance-title">⚡ Performance</div>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="performance-item">
+                                    <div class="performance-label">Processing Time:</div>
+                                    <div class="performance-value" id="processingTime">-</div>
+                                </div>
+                                <div class="performance-item">
+                                    <div class="performance-label">FPS:</div>
+                                    <div class="performance-value" id="fpsCounter">-</div>
+                                </div>
+                                <div class="performance-item">
+                                    <div class="performance-label">Frames Processed:</div>
+                                    <div class="performance-value" id="frameCounter">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Tab Content -->
+            <div id="docsContent" class="tab-pane">
+                <div class="docs-section">
+                    <h2>📖 API Documentation</h2>
+                    <p>Access comprehensive API documentation for the PPE Detection System.</p>
+                    
+                    <div class="docs-links">
+                        <div class="docs-card">
+                            <h3>🔧 Interactive API Documentation</h3>
+                            <p>Swagger UI with interactive API testing capabilities</p>
+                            <div class="docs-actions">
+                                <a href="/docs" target="_blank" class="btn btn-primary">
+                                    🚀 Open Swagger UI
+                                </a>
+                                <iframe id="swaggerFrame" src="/docs" class="docs-iframe" style="display: none;"></iframe>
+                                <button onclick="toggleIframe('swaggerFrame')" class="btn btn-secondary">
+                                    📱 View Inline
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="docs-card">
+                            <h3>📚 Alternative Documentation</h3>
+                            <p>ReDoc - Clean, three-panel design for API exploration</p>
+                            <div class="docs-actions">
+                                <a href="/redoc" target="_blank" class="btn btn-primary">
+                                    📖 Open ReDoc
+                                </a>
+                                <iframe id="redocFrame" src="/redoc" class="docs-iframe" style="display: none;"></iframe>
+                                <button onclick="toggleIframe('redocFrame')" class="btn btn-secondary">
+                                    📱 View Inline
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="docs-card">
+                            <h3>🔍 Quick API Reference</h3>
+                            <p>Essential endpoints for PPE detection</p>
+                            <div class="api-endpoints">
+                                <div class="endpoint">
+                                    <span class="method get">GET</span>
+                                    <code>/health</code>
+                                    <span class="description">System health check</span>
+                                </div>
+                                <div class="endpoint">
+                                    <span class="method get">GET</span>
+                                    <code>/model/info</code>
+                                    <span class="description">Model information</span>
+                                </div>
+                                <div class="endpoint">
+                                    <span class="method post">POST</span>
+                                    <code>/detect/image</code>
+                                    <span class="description">Image PPE detection</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Tab Content -->
+            <div id="aboutContent" class="tab-pane">
+                <div class="about-section">
+                    <h2>ℹ️ About PPE Detection System</h2>
+                    <div class="about-content">
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">🏗️</div>
+                                <h3>Construction Safety</h3>
+                                <p>Real-time monitoring of personal protective equipment compliance on construction sites.</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">🤖</div>
+                                <h3>AI-Powered Detection</h3>
+                                <p>Uses YOLOv8 deep learning model for accurate detection of helmets, vests, and safety equipment.</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">📹</div>
+                                <h3>Live Video Processing</h3>
+                                <p>Real-time webcam feed processing with instant violation alerts and compliance monitoring.</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">📊</div>
+                                <h3>Analytics & Reporting</h3>
+                                <p>Comprehensive statistics and performance metrics for safety compliance tracking.</p>
+                            </div>
+                        </div>
+
+                        <div class="system-info">
+                            <h3>🔧 System Information</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <strong>Version:</strong> 1.0.0
+                                </div>
+                                <div class="info-item">
+                                    <strong>Framework:</strong> FastAPI + YOLOv8
+                                </div>
+                                <div class="info-item">
+                                    <strong>Port:</strong> 8080
+                                </div>
+                                <div class="info-item">
+                                    <strong>Status:</strong> <span id="systemStatus">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <aside class="settings-panel" id="settingsPanel">
+            <div class="settings-header">
+                <h3>⚙️ Detection Settings</h3>
+                <button id="closeSettingsBtn" class="close-btn">&times;</button>
+            </div>
+
+            <div class="settings-content">
+                <div class="setting-group">
+                    <label for="confidenceThreshold">Confidence Threshold:</label>
+                    <input type="range" id="confidenceThreshold" min="0.1" max="1.0" step="0.05" value="0.5">
+                    <span id="confidenceValue" class="setting-value">0.5</span>
+                </div>
+
+                <div class="setting-group">
+                    <label for="iouThreshold">IoU Threshold:</label>
+                    <input type="range" id="iouThreshold" min="0.1" max="1.0" step="0.05" value="0.4">
+                    <span id="iouValue" class="setting-value">0.4</span>
+                </div>
+
+                <div class="setting-group">
+                    <label for="ppeOverlapThreshold">PPE Overlap Threshold:</label>
+                    <input type="range" id="ppeOverlapThreshold" min="0.1" max="1.0" step="0.05" value="0.3">
+                    <span id="ppeOverlapValue" class="setting-value">0.3</span>
+                </div>
+
+                <div class="setting-group">
+                    <label for="detectionInterval">Detection Interval (ms):</label>
+                    <input type="range" id="detectionInterval" min="100" max="2000" step="100" value="500">
+                    <span id="intervalValue" class="setting-value">500ms</span>
+                </div>
+
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showAnnotations" checked>
+                        Show Annotated Images
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="autoSaveViolations">
+                        Auto-save Violations
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Settings Toggle Button -->
+        <button id="settingsToggleBtn" class="settings-toggle">⚙️</button>
+
+        <!-- Notification Area -->
+        <div id="notificationArea" class="notification-area"></div>
+        
+        <!-- Folder Management Modal -->
+        <div id="folderModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>📁 Управление файлами нарушений</h3>
+                <div class="folder-options">
+                    <div class="folder-info">
+                        <p>Папка содержит:</p>
+                        <ul id="folderContentsList">
+                            <li>📹 Видео записи нарушений</li>
+                            <li>📄 JSON отчеты детекции</li>
+                            <li>📊 CSV сводки по нарушениям</li>
+                            <li>📋 Текстовые логи</li>
+                        </ul>
+                        <div class="folder-stats">
+                            <span id="folderStats">Загрузка статистики...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="folder-actions">
+                        <button id="openFolderBtn" class="btn btn-primary">
+                            🗂️ Открыть папку
+                        </button>
+                        <button id="downloadArchiveBtn" class="btn btn-secondary">
+                            📦 Скачать архив
+                        </button>
+                        <button id="clearViolationsBtn" class="btn btn-danger">
+                            🗑️ Очистить папку
+                        </button>
+                        <button id="closeFolderModal" class="btn btn-cancel">
+                            Закрыть
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

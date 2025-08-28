@@ -1,0 +1,143 @@
+# PPE Detection System - Production Configuration
+# Author: PPE Detection System
+# Date: 2025-08-26
+# This configuration is optimized for production deployment
+
+# Inherit from default and override specific settings
+defaults:
+  - default
+
+# Model Configuration - Production Optimized
+model:
+  # Use more accurate model for production
+  weights: "yolov8s.pt"  # or custom trained model
+  
+  # Production device configuration
+  device: "cuda"  # Prefer GPU for production
+  
+  # Stricter thresholds for production
+  confidence_threshold: 0.4
+  iou_threshold: 0.45
+  
+  # Larger input size for better accuracy
+  image_size: 640
+  
+  # Optimized batch processing
+  max_batch_size: 8
+
+# PPE Detection - Production Parameters
+ppe:
+  # More conservative matching for production
+  overlap_threshold: 0.35
+  min_area_ratio: 0.02
+  max_area_ratio: 0.45
+  min_iou_threshold: 0.15
+
+# API Server - Production Configuration
+api:
+  host: "0.0.0.0"
+  port: 8080
+  reload: false
+  workers: 4  # Multiple workers for production
+  
+  # Stricter limits for production
+  max_file_size_mb: 20
+  
+  # Security settings
+  allowed_hosts: ["*"]
+  cors_origins: ["*"]
+  
+  # Timeout settings
+  timeout_keep_alive: 30
+  timeout_graceful_shutdown: 10
+
+# Camera Configuration - Production
+camera:
+  # Higher quality settings
+  default_width: 1920
+  default_height: 1080
+  default_fps: 30
+  
+  # Robust connection settings
+  buffer_size: 2
+  reconnect_delay: 3.0
+  max_reconnect_attempts: 5
+  max_consecutive_failures: 3
+
+# Logging - Production Level
+logging:
+  level: "WARNING"  # Reduce log noise in production
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Enable file logging for production
+  file_logging: true
+  log_file: "/var/log/ppe_detection/app.log"
+  max_file_size_mb: 50
+  backup_count: 10
+
+# Performance - Production Optimized
+performance:
+  # Enable multiprocessing for production
+  use_multiprocessing: true
+  max_workers: 8
+  
+  # Higher memory limits
+  clear_cache_interval: 50
+  max_memory_usage_mb: 4096
+  
+  # Enable optimizations
+  use_tensorrt: true
+  use_onnx: false
+
+# Storage - Production Paths
+storage:
+  images_dir: "/app/data/images"
+  videos_dir: "/app/data/videos"
+  output_dir: "/app/data/output"
+  temp_dir: "/tmp/ppe_detection"
+  
+  # Production cleanup
+  auto_cleanup_temp: true
+  temp_retention_hours: 12
+
+# Monitoring and Health Checks
+monitoring:
+  # Health check endpoints
+  enable_health_check: true
+  health_check_interval: 30
+  
+  # Metrics collection
+  enable_metrics: true
+  metrics_port: 9090
+  
+  # Performance monitoring
+  track_inference_time: true
+  track_memory_usage: true
+  track_gpu_usage: true
+  
+  # Alerting thresholds
+  max_inference_time_ms: 1000
+  max_memory_usage_percent: 80
+  max_gpu_memory_percent: 85
+
+# Security Settings
+security:
+  # API security
+  enable_api_key: false  # Set to true and configure if needed
+  api_key_header: "X-API-Key"
+  
+  # CORS settings
+  cors_allow_credentials: false
+  cors_allow_methods: ["GET", "POST"]
+  cors_allow_headers: ["*"]
+  
+  # Rate limiting
+  enable_rate_limiting: true
+  rate_limit_requests: 100
+  rate_limit_period: 60  # seconds
+
+# Development Settings - Disabled for Production
+development:
+  debug: false
+  profiling: false
+  save_debug_images: false
